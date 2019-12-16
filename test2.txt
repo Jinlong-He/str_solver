@@ -1,0 +1,22 @@
+declare: ArrayBuffer(P0)
+#intconstraints:
+P0 != 0 & ((R0 + -1 * P0) = 0) & TRUE
+$
+#automata:
+#states: 2
+#init: 0
+#final: 1,
+#transitons: 
+1;1;0;127;List()
+0;1;47;47;List()
+#register: 
+#end
+#automata:
+#states: 1
+#init: 0
+#final: 0,
+#transitons: 
+0;0;0;127;List(1)
+#register: R0;
+#end
+$

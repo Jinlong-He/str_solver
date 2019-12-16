@@ -1,0 +1,25 @@
+MODULE main
+VAR
+R0 : integer;
+VAR
+s_0 : {v0,v1,t};
+IVAR
+c_0 : {r_1_};
+IVAR
+P0 : integer;
+INIT
+(s_0=v0)
+INIT
+(R0=0)
+ASSIGN
+next(R0):= case
+((s_0=v0)&(c_0=r_1_)) : R0 + 1;
+((s_0=v1)&(c_0=r_1_)) : R0 + 1;
+TRUE : R0;
+esac;
+next(s_0):= case
+((s_0=v0)&(c_0=r_1_)) : v1;
+((s_0=v1)&(c_0=r_1_)) : v1;
+TRUE : t;
+esac;
+INVARSPEC !((P0 != 0 & ((R0 + -1 * P0) = 0) & TRUE&(FALSE|(s_0=v1))))
