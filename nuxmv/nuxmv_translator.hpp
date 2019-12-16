@@ -8,7 +8,7 @@
 
 #ifndef nuxmv_translator_hpp 
 #define nuxmv_translator_hpp
-#include "../../fml/atl/automaton/fomula_automaton/fomula_automaton.hpp"
+#include "../fml/atl/automaton/fomula_automaton/fomula_automaton.hpp"
 using namespace atl;
 using namespace ll;
 namespace nuxmv {

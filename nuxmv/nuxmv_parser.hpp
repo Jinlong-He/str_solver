@@ -10,7 +10,7 @@
 #define nuxmv_parser_hpp
 #include <iostream>
 #include <vector>
-#include "../../fml/atl/automaton/fomula_automaton/fomula_automaton.hpp"
+#include "../fml/atl/automaton/fomula_automaton/fomula_automaton.hpp"
 using std::string;
 using std::vector;
 using namespace atl;
