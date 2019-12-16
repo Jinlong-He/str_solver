@@ -54,7 +54,6 @@ void StrSolver::parseDeclaration(const string& str) {
 void StrSolver::parse(const strings& strs) {
     parseDeclaration(strs[0]);
     parseConstrain(strs[2]);
-    cout << fomula_.to_string() << endl;
     parseIdcrasList(strings(strs.begin() + 3, strs.end()));
 }
 
@@ -109,8 +108,6 @@ void StrSolver::getCounterIdcrasList() {
                                    l, p.symbol_property);
                 }
             }
-            cout << endl;
-            atl::print_fa(*newIdcra);
             newIdcras.push_back(newIdcra);
         }
         counterIdcrasList_.push_back(newIdcras);
@@ -147,18 +144,17 @@ void StrSolver::solve(const string& timeout) {
             if (fa == idcras.front()) continue;
             res = get_intersect_fa(res, minimize(*fa));
         }
-        if (is_empty(res)) return;
-        print_fa(res);
-        cout << endl;
+        if (is_empty(res)) {
+            cout << "intersection is empty, this is true !" << endl;
+            return;
+        }
         NRA nra;
-        cout << "nra" << endl;
         toNRA(res, nra);
         DRA dra = minimize(determinize(nra));
         string name = "_" + std::to_string(i++);
         //encode_idcra(res, name, *fa_, f);
         encode_dra(dra, name, *fa_, f);
     }
-    cout << f.to_string() << endl;
     atl::set_property(*fa_, f);
     nuxmvSolver_ = new nuxmv::nuxmv_solver(fa_);
     nuxmvSolver_ -> solve(timeout);
