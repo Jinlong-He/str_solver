@@ -9,7 +9,7 @@
 #define register_hpp
 #include <vector>
 #include <boost/algorithm/string.hpp>
-#include "../../fml/atl/automaton/finite_automaton/nondeterministic_finite_automaton.hpp"
+#include "../fml/atl/automaton/finite_automaton/nondeterministic_finite_automaton.hpp"
 using std::vector;
 
 class RegisterNames {

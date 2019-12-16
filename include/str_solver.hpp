@@ -12,7 +12,7 @@
 #include "idcra.hpp"
 #include "idcra_parser.hpp"
 #include "../nuxmv/nuxmv_solver.hpp"
-#include "../../fml/atl/automaton/automaton_utility.hpp"
+#include "../fml/atl/automaton/automaton_utility.hpp"
 
 class StrSolver {
     typedef std::vector<string> strings;

@@ -8,7 +8,7 @@
 #ifndef label_hpp 
 #define label_hpp
 #include <map>
-#include "../../fml/atl/automaton/finite_automaton/nondeterministic_finite_automaton.hpp"
+#include "../fml/atl/automaton/finite_automaton/nondeterministic_finite_automaton.hpp"
 
 class Label {
 public:

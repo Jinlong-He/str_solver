@@ -8,7 +8,7 @@
 #ifndef idcra_parser_hpp 
 #define idcra_parser_hpp
 #include "idcra.hpp"
-#include "../../nuxmv/include/nuxmv_solver.hpp"
+#include "../nuxmv/nuxmv_solver.hpp"
 
 class IdcraParser {
 public:
