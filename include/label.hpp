@@ -58,7 +58,7 @@ private:
 
 namespace boost {
     template <>
-    struct boost::hash<Label> {
+    struct hash<Label> {
         std::size_t operator()(const Label& l) const {
             return l.hash_value();
         }

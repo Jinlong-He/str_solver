@@ -96,14 +96,14 @@ private:
 
 namespace boost {
     template <>
-    struct boost::hash<Registers> {
+    struct hash<Registers> {
         std::size_t operator()(const Registers& r) const {
             return boost::hash_value(r.nums());
         }
     };
 
     template <>
-    struct boost::hash<RegisterNames> {
+    struct hash<RegisterNames> {
         std::size_t operator()(const RegisterNames& r) const {
             return boost::hash_value(r.names());
         }
