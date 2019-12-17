@@ -101,7 +101,7 @@ void StrSolver::getCounterIdcrasList() {
                 auto setIt = labelNodes.find(p.symbol.min());
                 auto nextIt = setIt;
                 nextIt++;
-                while (*nextIt <= p.symbol.max() + 1) {
+                while (nextIt != labelNodes.end() && *nextIt <= p.symbol.max() + 1) {
                     Label l(*setIt++, (*nextIt++) - 1);
                     add_transition(*newIdcra, 
                                    atl::source(*idcra, *tit), atl::target(*idcra, *tit),
@@ -143,11 +143,14 @@ void StrSolver::solve(const string& timeout) {
         for (auto fa : idcras) {
             if (fa == idcras.front()) continue;
             res = get_intersect_fa(res, minimize(*fa));
+            //print_fa(res);
+            //cout << "*******************" << endl;
         }
         if (is_empty(res)) {
             cout << "intersection is empty, this is true !" << endl;
             return;
         }
+        if (atl::get_property(res).names().size() == 0) continue;
         NRA nra;
         toNRA(res, nra);
         DRA dra = minimize(determinize(nra));

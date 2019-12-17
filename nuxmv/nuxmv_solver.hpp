@@ -42,7 +42,7 @@ namespace nuxmv {
                 string commond = is_infinite(*fa_) ? time_str + " nuxmv -source cmd_file out.smv" : 
                                                      time_str + " nuxmv out.smv";
                 std::cout << commond << std::endl;
-                system(commond.c_str());
+                std::cout << system(commond.c_str()) << std::endl;
             }
             //string result;
             //FILE* ptr = nullptr;

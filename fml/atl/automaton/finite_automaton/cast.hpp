@@ -11,6 +11,7 @@
 
 #include <queue>
 #include "../detail/automaton.hpp"
+#include "../automaton_utility.hpp"
 #include "deterministic_finite_automaton.hpp"
 #include "nondeterministic_finite_automaton.hpp"
 #include "closure.hpp"
@@ -53,8 +54,8 @@ namespace atl {
                     if (map1_.size() != map2_.size()) return false;
                     for (auto& map_pair1 : map1_) {
                         if (map2_.count(map_pair1.first) == 0) return false;
-                        if (state2_map.count(map_pair1.second) & 
-                            state2_map.count(map2_.at(map_pair1.first))) continue;
+                        //if (state2_map.count(map_pair1.second) & 
+                        //    state2_map.count(map2_.at(map_pair1.first))) continue;
                         if (state2_map.at(map_pair1.second) != 
                             state2_map.at(map2_.at(map_pair1.first))) return false;
                     }
@@ -127,8 +128,34 @@ namespace atl {
             State2Map state2_map;
             State unfinal_state = add_state(a_out),
                   final_state = add_state(a_out);
+            typename DFA::State2Map copy_map;;
+            DFA dfa;
             for (auto state : reachable_states) {
-                if (is_final_state(a_in, state)) {
+                auto s = add_state(dfa);
+                copy_map[state] = s;
+                if (state == a_in.initial_state()) dfa.set_initial_state(s);
+                if (is_final_state(a_in, state)) set_final_state(dfa, s);
+            }
+
+            for (auto state : reachable_states) {
+                typename DFA::OutTransitionIter it, end;
+                for (tie(it, end) = out_transitions(a_in, state); it != end; it++) {
+                    auto target_state = atl::target(a_in, *it);
+                    if (reachable_states.count(target_state) == 0) continue;
+                    add_transition(dfa, copy_map[state], copy_map[target_state],
+                                   atl::get_property(a_in, *it));
+                }
+            }
+
+            //cout << "*****************" << endl;
+            //print_fa(a_in);
+            //print_fa(dfa);
+            //cout << "*****************" << endl;
+
+            typename DFA::StateIter it, end;
+            for (tie(it, end) = states(dfa); it != end; it++) {
+                auto state = *it;
+                if (is_final_state(dfa, state)) {
                     final_states.insert(state);
                     state2_map[state] = final_state;
                 } else {
@@ -137,14 +164,25 @@ namespace atl {
                 }
             }
 
+            //for (auto state : reachable_states) {
+            //    if (is_final_state(a_in, state)) {
+            //        final_states.insert(state);
+            //        state2_map[state] = final_state;
+            //    } else {
+            //        unfinal_states.insert(state);
+            //        state2_map[state] = unfinal_state;
+            //    }
+            //}
+
             std::queue<StateSet> eqs({final_states});
             if (unfinal_states.size() > 0) eqs.push(unfinal_states);
-            get_equivalences(a_in, a_out, eqs, state2_map);
+            get_equivalences(dfa, a_out, eqs, state2_map);
 
             atl::clear(a_out);
-            atl::set_alphabet(a_out, atl::get_alphabet(a_in));
+            atl::set_alphabet(a_out, atl::get_alphabet(dfa));
             if constexpr (!std::is_same<typename DFA::automaton_property_type, 
                                         boost::no_property>::value) {
+                //atl::set_property(a_out, atl::get_property(dfa));
                 atl::set_property(a_out, atl::get_property(a_in));
             }
             
@@ -153,15 +191,15 @@ namespace atl {
                                        boost::no_property>::value) {
                 initial_state = add_initial_state(a_out);
             } else {
-                initial_state = add_initial_state(a_out, atl::get_property(a_in, 
-                                                              a_in.initial_state()));
+                initial_state = add_initial_state(a_out, atl::get_property(dfa, 
+                                                              dfa.initial_state()));
             }
 
-            if (is_final_state(a_in, a_in.initial_state())) 
+            if (is_final_state(dfa, dfa.initial_state())) 
                 a_out.set_final_state(initial_state);
 
-            State2Map new_state2_map({{a_in.initial_state(), initial_state}}),
-                      map({{state2_map[a_in.initial_state()], initial_state}});
+            State2Map new_state2_map({{dfa.initial_state(), initial_state}}),
+                      map({{state2_map[dfa.initial_state()], initial_state}});
             for (auto& map_pair : state2_map) {
                 State state = map_pair.second;
                 if (map.count(state) == 0) {
@@ -170,10 +208,10 @@ namespace atl {
                                                boost::no_property>::value) {
                         new_state = add_state(a_out);
                     } else {
-                        new_state = add_state(a_out, atl::get_property(a_in, map_pair.first));
+                        new_state = add_state(a_out, atl::get_property(dfa, map_pair.first));
                     }
 
-                    if (is_final_state(a_in, map_pair.first)) 
+                    if (is_final_state(dfa, map_pair.first)) 
                         a_out.set_final_state(new_state);
                     new_state2_map[map_pair.first] = new_state;
                     map[state] = new_state;
@@ -182,7 +220,7 @@ namespace atl {
                 }
             }
 
-            const auto& transition_map = a_in.transition_map();
+            const auto& transition_map = dfa.transition_map();
             for (auto& map_pair : new_state2_map) {
                 if (map_pair.first == -1 || map_pair.second == -1) continue;
                 ID count1 = transition_map.count(map_pair.first), 
