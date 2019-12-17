@@ -22,6 +22,44 @@ using std::endl;
 
 namespace atl {
     struct minimize_impl {
+
+        template <typename DFA>
+        static void 
+        remove_deadstates(const DFA& a_in,
+                          DFA& a_out) {
+            atl::set_alphabet(a_out, atl::get_alphabet(a_in));
+            if constexpr (!std::is_same<typename DFA::automaton_property_type, 
+                                        boost::no_property>::value) {
+                atl::set_property(a_out, atl::get_property(a_in));
+            }
+            typename DFA::StateSet reachable_states;
+            atl::reachable_closure(a_in, reachable_states);
+            typename DFA::State2Map copy_map;;
+            for (auto state : reachable_states) {
+                typename DFA::State s;
+                if constexpr (std::is_same<typename DFA::state_property_type, 
+                                           boost::no_property>::value) {
+                    s = add_state(a_out);
+                } else {
+                    s = add_state(a_out, atl::get_property(a_in, state));
+                }
+
+                copy_map[state] = s;
+                if (state == a_in.initial_state()) a_out.set_initial_state(s);
+                if (is_final_state(a_in, state)) set_final_state(a_out, s);
+            }
+
+            for (auto state : reachable_states) {
+                typename DFA::OutTransitionIter it, end;
+                for (tie(it, end) = out_transitions(a_in, state); it != end; it++) {
+                    auto target_state = atl::target(a_in, *it);
+                    if (reachable_states.count(target_state) == 0) continue;
+                    add_transition(a_out, copy_map[state], copy_map[target_state],
+                                   atl::get_property(a_in, *it));
+                }
+            }
+        }
+
         template <typename DFA>
         static bool 
         is_equal(const DFA& dfa,
@@ -122,35 +160,13 @@ namespace atl {
             typedef typename DFA::State2Map State2Map;
             typedef typename DFA::TransitionMap TransitionMap;
             typedef typename DFA::state_property_type StateProperty;
-            StateSet reachable_states, unfinal_states, final_states;
+            StateSet unfinal_states, final_states;
             atl::clear(a_out);
-            atl::reachable_closure(a_in, reachable_states);
             State2Map state2_map;
             State unfinal_state = add_state(a_out),
                   final_state = add_state(a_out);
-            typename DFA::State2Map copy_map;;
             DFA dfa;
-            for (auto state : reachable_states) {
-                auto s = add_state(dfa);
-                copy_map[state] = s;
-                if (state == a_in.initial_state()) dfa.set_initial_state(s);
-                if (is_final_state(a_in, state)) set_final_state(dfa, s);
-            }
-
-            for (auto state : reachable_states) {
-                typename DFA::OutTransitionIter it, end;
-                for (tie(it, end) = out_transitions(a_in, state); it != end; it++) {
-                    auto target_state = atl::target(a_in, *it);
-                    if (reachable_states.count(target_state) == 0) continue;
-                    add_transition(dfa, copy_map[state], copy_map[target_state],
-                                   atl::get_property(a_in, *it));
-                }
-            }
-
-            //cout << "*****************" << endl;
-            //print_fa(a_in);
-            //print_fa(dfa);
-            //cout << "*****************" << endl;
+            remove_deadstates(a_in, dfa);
 
             typename DFA::StateIter it, end;
             for (tie(it, end) = states(dfa); it != end; it++) {
@@ -231,14 +247,12 @@ namespace atl {
                         if constexpr (!std::is_same<typename DFA::symbol_property_type, 
                                                     no_type>::value) {
                             for (auto& map_pair2 : map_pair1.second) {
-                                if (reachable_states.count(map_pair2.second) == 0) continue;
                                 add_transition(a_out,
                                                map_pair.second, 
                                                new_state2_map.at(map_pair2.second),
                                                map_pair1.first, map_pair2.first);
                             }
                         } else {
-                            if (reachable_states.count(map_pair1.second) == 0) continue;
                             add_transition(a_out,
                                            map_pair.second, new_state2_map.at(map_pair1.second),
                                            map_pair1.first);
@@ -269,6 +283,14 @@ namespace atl {
     minimize(const FA& a_in,
              typename FA::DFA& a_out) {
         minimize_impl::apply(a_in, a_out);
+    }
+
+    template <typename FA>
+    inline FA 
+    remove_deadstates(const FA& a_in) {
+        FA a_out;
+        minimize_impl::remove_deadstates(a_in, a_out);
+        return a_out;
     }
     
     //template <typename FiniteAutomaton,

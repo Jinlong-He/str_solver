@@ -139,7 +139,7 @@ namespace atl {
                      typename DFA::State state_lhs,
                      typename DFA::State state_rhs,
                      typename DFA::State state_out,
-                     typename DFA::StatePairMap pair_map,
+                     typename DFA::StatePairMap& pair_map,
                      StateMerge state_merge,
                      SymbolPropertyMerge symbol_property_merge) {
             typedef typename DFA::State State;
@@ -249,6 +249,7 @@ namespace atl {
                               intersect_merge<typename DFA::state_property_type>(),
                               intersect_merge<typename DFA::symbol_property_type>(),
                               intersect_merge<typename DFA::automaton_property_type>());
+        //return remove_deadstates(a_out);
         return minimize(a_out);
     }
 }

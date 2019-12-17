@@ -142,8 +142,10 @@ void StrSolver::solve(const string& timeout) {
         IDCRA res = minimize(*(idcras.front()));
         for (auto fa : idcras) {
             if (fa == idcras.front()) continue;
+            cout << "*******start intersect********" << endl;
             res = get_intersect_fa(res, minimize(*fa));
-            //print_fa(res);
+            cout << "*******end intersect********" << endl;
+            print_fa(res);
             //cout << "*******************" << endl;
         }
         if (is_empty(res)) {
