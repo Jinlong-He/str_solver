@@ -147,6 +147,8 @@ DFA toDFA(IDCRA& idcra, typename IDCRA::State2StateSetMap& h_map) {
     return (minimize(nfa, h_map));
 }
 
+
+
 void StrSolver::solve1(const string& timeout) {
     typedef typename IDCRA::State State;
     fa_ = new fomula_automaton();
