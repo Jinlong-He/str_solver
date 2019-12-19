@@ -46,8 +46,10 @@ void IdcraParser::parse(const vector<string>& strs, IDCRA& idcra) {
         Registers registers(nums);
         if (reg_name_strs[1].size() > 2) {
             atl::add_transition(idcra, source, target, Label(min, max), registers);
+            atl::set_alphabet(idcra, Label(min, max));
         } else {
             atl::add_transition(idcra, source, target, Label(min, max), Registers());
+            atl::set_alphabet(idcra, Label(min, max));
         }
     }
 }

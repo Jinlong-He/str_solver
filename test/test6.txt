@@ -1,0 +1,14 @@
+declare: Set()
+#intconstraints:
+TRUE & ((R0 + -1 * 5) = 0) 
+$
+#automata:
+#states: 1
+#init: 0
+#final: 0,
+#transitons: 
+0;0;0;127;List(1)
+#register: R0;
+#end
+$
+

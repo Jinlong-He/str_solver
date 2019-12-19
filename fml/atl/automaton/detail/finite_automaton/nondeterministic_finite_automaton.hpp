@@ -157,15 +157,15 @@ namespace atl {
         };
     }
 
-    template <typename NFA>
-    inline pair<typename NFA::Transition, bool>
-    add_epsilon_transition(NFA& a,
-                           typename NFA::State s,
-                           typename NFA::State t) {
-        set_modified_flag(a);
-        set_epsilon_flag(a);
-        return a.add_transition(s, t, a.epsilon());
-    }
+    //template <typename NFA>
+    //inline pair<typename NFA::Transition, bool>
+    //add_epsilon_transition(NFA& a,
+    //                       typename NFA::State s,
+    //                       typename NFA::State t) {
+    //    set_modified_flag(a);
+    //    set_epsilon_flag(a);
+    //    return a.add_transition(s, t, a.epsilon());
+    //}
 
     template <typename NFA>
     inline void

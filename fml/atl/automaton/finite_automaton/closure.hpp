@@ -69,12 +69,12 @@ namespace atl {
     template <typename FiniteAutomaton>
     inline void
     reachable_closure(const FiniteAutomaton& fa,
-                      typename FiniteAutomaton::StateSet& reachable_states) {
-            typename FiniteAutomaton::StateSet forward_states({fa.initial_state()}),
-                                               backward_states(fa.final_state_set());
+                      typename FiniteAutomaton::StateSet& reachable_closure) {
+            typename FiniteAutomaton::StateSet forward_states({initial_state(fa)}),
+                                               backward_states(final_state_set(fa));
             atl::reachable_closure(fa, forward_states, forward_states, forward);
             atl::reachable_closure(fa, backward_states, backward_states, backward);
-            util::set_intersection(forward_states, backward_states, reachable_states);
+            util::set_intersection(forward_states, backward_states, reachable_closure);
     }
 
     struct epsilon_closure_impl {

@@ -103,6 +103,21 @@ namespace atl {
                 return *this;
             }
 
+            virtual State 
+            add_state(const state_property_type& p) {
+                State state = Base::add_state(p);
+                state_set_.insert(state);
+                return state;
+            }
+
+            virtual State 
+            add_state() {
+                State state = Base::add_state();
+                state_set_.insert(state);
+                return state;
+            }
+
+
             virtual void clear() {
                 Base::clear();
                 initial_state_ = -1;
@@ -157,6 +172,11 @@ namespace atl {
             }
 
             void 
+            set_alphabet(const symbol_type& c) {
+                alphabet_.insert(c);
+            }
+
+            void 
             set_state(State state) {
                 state_set_.insert(state);
             }
@@ -169,24 +189,17 @@ namespace atl {
             virtual pair<Transition, bool>
             add_transition(State s, State t,
                            const transition_property_type& c) {
-                if constexpr (std::is_same<SymbolProperty, no_type>::value) {
-                    alphabet_.insert(c);
-                } else {
-                    alphabet_.insert(c.symbol);
-                }
                 return Base::add_transition(s, t, c);
             }
 
             virtual pair<Transition, bool>
             add_transition(State s, State t,
-                           const Symbol& c,
-                           const SymbolProperty& p) {
-                if constexpr (!std::is_same<SymbolProperty, no_type>::value) {
-                    alphabet_.insert(c);
-                    return Base::add_transition(s, t, transition_property(c, p));
-                } else {
-                    alphabet_.insert(c);
+                           const symbol_type& c,
+                           const symbol_property_type& p) {
+                if constexpr (std::is_same<SymbolProperty, no_type>::value) {
                     return Base::add_transition(s, t, c);
+                } else {
+                    return Base::add_transition(s, t, transition_property(c, p));
                 }
             }
 
@@ -199,6 +212,12 @@ namespace atl {
     }
 
     template <typename FA>
+    inline typename FA::SymbolSet const&
+    alphabet(const FA& fa) {
+        return fa.alphabet();
+    }
+
+    template <typename FA>
     inline void
     set_alphabet(FA& fa,
                  typename FA::SymbolSet const& set) {
@@ -206,33 +225,75 @@ namespace atl {
     }
 
     template <typename FA>
-    inline typename FA::SymbolSet 
-    get_alphabet(const FA& fa) {
-        return fa.alphabet();
+    inline void
+    set_alphabet(FA& fa,
+                 typename FA::symbol_type const& c) {
+        fa.set_alphabet(c);
     }
 
     template <typename FA>
     inline typename FA::State
-    get_initial_state(FA& fa) {
+    initial_state(const FA& fa) {
         return fa.initial_state();
     }
 
     template <typename FA>
     inline void
-    set_initial_state(FA& fa, typename FA::State state) {
+    set_initial_state(FA& fa, 
+                      typename FA::State state) {
         fa.set_initial_state(state);
     }
 
     template <typename FA>
-    inline typename FA::State
-    get_final_state(FA& fa) {
-        return fa.fianl_state();
+    inline typename FA::StateSet const&
+    state_set(FA& fa) {
+        return fa.state_set();
     }
 
     template <typename FA>
     inline void  
-    set_final_state(FA& fa, typename FA::State state) {
+    set_state_set(FA& fa, 
+                  typename FA::StateSet const& set) {
+        fa.set_state_set(set);
+    }
+
+    template <typename FA>
+    inline void  
+    set_state(FA& fa, 
+              typename FA::State state) {
+        fa.set_state(state);
+    }
+
+    template <typename FA>
+    inline typename FA::StateSet const&
+    final_state_set(FA& fa) {
+        return fa.final_state_set();
+    }
+
+    template <typename FA>
+    inline void  
+    set_final_state_set(FA& fa, 
+                        typename FA::StateSet const& set) {
+        fa.set_final_state_set(set);
+    }
+
+    template <typename FA>
+    inline void  
+    set_final_state(FA& fa, 
+                    typename FA::State state) {
         fa.set_final_state(state);
+    }
+
+    template <typename FA>
+    inline typename FA::TransitionMap const&
+    transition_map(const FA& fa) {
+        return fa.transition_map();
+    }
+
+    template <typename FA>
+    inline typename FA::symbol_type
+    epsilon(const FA& fa) {
+        return fa.epsilon();
     }
 
     template <typename FA>
@@ -277,6 +338,13 @@ namespace atl {
                    typename FA::symbol_type c,
                    typename FA::symbol_property_type p) {
         return fa.add_transition(s, t, c, p);
+    }
+    
+    template <typename FA>
+    inline bool
+    is_initial_state(const FA& fa,
+                     typename FA::State s) {
+        return (s == initial_state(fa));
     }
 
     template <typename FA>

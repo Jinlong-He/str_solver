@@ -29,6 +29,8 @@ namespace atl {
                                                                   SymbolProperty,
                                                                   StateProperty,
                                                                   AutomatonProperty> Base;
+            typedef nondeterministic_finite_automaton NFA;
+
             typedef deterministic_finite_automaton<Symbol, epsilon_,
                                                    SymbolProperty,
                                                    StateProperty,
@@ -42,6 +44,9 @@ namespace atl {
             typedef typename Base::StateSetMap StateSetMap;
             typedef typename Base::Transition Transition;
             typedef typename Base::State State;
+            typedef typename Base::StateSet StateSet;
+
+            typedef unordered_map<State, StateSet> State2StateSetMap;
 
         public:
             nondeterministic_finite_automaton()

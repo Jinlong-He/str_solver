@@ -44,6 +44,7 @@ public:
     }
 
     void solve(const string& timeout);
+    void solve1(const string& timeout);
 private:
     void readFile(const string& fileName, strings& strs);
     void parseIdcras(const strings& strs, IDCRAs& idcras);

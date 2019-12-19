@@ -19,6 +19,11 @@ typedef atl::nondeterministic_finite_automaton<Registers, -1, atl::no_type,
 typedef atl::deterministic_finite_automaton<Registers, -1, atl::no_type, 
                                             atl::no_type, RegisterNames> DRA;
 
+typedef atl::nondeterministic_finite_automaton<Label, -1, atl::no_type, 
+                                               atl::no_type, atl::no_type> NFA;
+typedef atl::deterministic_finite_automaton<Label, -1, atl::no_type, 
+                                            atl::no_type, atl::no_type> DFA;
+
 typedef atl::deterministic_finite_automaton<Label, -1, Registers, 
                                                atl::no_type, RegisterNames> IDCRA;
 typedef vector<IDCRA*> IDCRAs;

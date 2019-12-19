@@ -73,14 +73,11 @@ void StrSolver::getCounterIdcrasList() {
     std::set<int> labelNodes;
     for (auto& idcras : idcrasList_) {
         for (auto idcra : idcras) {
-            for (auto& l : get_alphabet(*idcra)) {
+            for (auto& l : alphabet(*idcra)) {
                 labelNodes.insert(l.min());
                 labelNodes.insert(l.max() + 1);
             }
         }
-        //for (auto label : labelNodes)
-        //    cout << label << " ";
-        //cout << endl;
         IDCRAs newIdcras;
         for (auto idcra : idcras) {
             IDCRA* newIdcra = new IDCRA();
@@ -106,6 +103,7 @@ void StrSolver::getCounterIdcrasList() {
                     add_transition(*newIdcra, 
                                    atl::source(*idcra, *tit), atl::target(*idcra, *tit),
                                    l, p.symbol_property);
+                    set_alphabet(*newIdcra, l);
                 }
             }
             newIdcras.push_back(newIdcra);
@@ -131,6 +129,107 @@ void toNRA(IDCRA& idcra, NRA& nra) {
     }
 }
 
+DFA toDFA(IDCRA& idcra, typename IDCRA::State2StateSetMap& h_map) {
+    NFA nfa;
+    typename IDCRA::StateIter it, end;
+    for (tie(it, end) = states(idcra); it != end; it++) {
+        auto state = add_state(nfa);
+        if (*it == idcra.initial_state()) set_initial_state(nfa, state);
+        if (is_final_state(idcra, *it)) set_final_state(nfa, state);
+    }
+    for (tie(it, end) = states(idcra); it != end; it++) {
+        typename IDCRA::OutTransitionIter tit, tend;
+        for (tie(tit, tend) = out_transitions(idcra, *it); tit != tend; tit++) {
+            add_transition(nfa, *it, atl::target(idcra, *tit),
+                           atl::get_property(idcra, *tit).symbol);
+        }
+    }
+    return (minimize(nfa, h_map));
+}
+
+void StrSolver::solve1(const string& timeout) {
+    typedef typename IDCRA::State State;
+    fa_ = new fomula_automaton();
+    for (auto& var : undeclaredVar_) {
+        add_input_state(*fa_, int_variable(var));
+    }
+    ID i = 0;
+    auto f = fomula_;
+    for (auto& idcras : counterIdcrasList_) {
+        vector<typename IDCRA::State2StateSetMap> h_maps;
+        unordered_map<State, vector<vector<State> > > intersect_map;
+        typename IDCRA::State2StateSetMap h_map;
+        DFA res = toDFA(*(idcras.front()), h_map);
+        h_maps.push_back(h_map);
+        //print_fa(res);
+        for (auto fa : idcras) {
+            if (fa == idcras.front()) continue;
+            cout << "*******start intersect********" << endl;
+            typename IDCRA::State2StateSetMap h_map;
+            DFA dfa = toDFA(*fa, h_map);
+            h_maps.push_back(h_map);
+            typename IDCRA::State2StatePairsMap hp_map;
+            //cout << "===========" << endl;
+            //print_fa(dfa);
+            res = get_intersect_fa(res, dfa, hp_map);
+            if (intersect_map.size() == 0) {
+                for (auto& map_pair : hp_map) {
+                    auto& vecs = intersect_map[map_pair.first];
+                    for (auto& s_pair : map_pair.second) {
+                        vector<State> vec({s_pair.first, s_pair.second});
+                        vecs.push_back(vec);
+                    }
+                }
+            } else {
+                unordered_map<State, vector<vector<State> > > new_intersect_map;
+                for (auto& map_pair : hp_map) {
+                    auto& new_vecs = new_intersect_map[map_pair.first];
+                    for (auto& s_pair : map_pair.second) {
+                        auto& vecs = intersect_map.at(s_pair.first);
+                        for (auto& vec : vecs) {
+                            vector<State> new_vec(vec);
+                            new_vec.push_back(s_pair.second);
+                            new_vecs.push_back(new_vec);
+                        }
+                    }
+                }
+                intersect_map.clear();
+                intersect_map = new_intersect_map;
+            }
+            //print_fa(res);
+            cout << "*******end intersect********" << endl;
+        }
+
+
+        if (is_empty(res)) {
+            cout << "intersection is empty, this is true !" << endl;
+            return;
+        }
+        cout << "finish intersection" << endl;
+        print_fa(res);
+        for (auto& map_pair : intersect_map) {
+            cout << map_pair.first << " -> " << endl;
+            for (auto& vec : map_pair.second) {
+                for (auto s : vec) {
+                    cout << s << " ";
+                }
+                cout << endl;
+            }
+        }
+
+        //if (atl::get_property(res).names().size() == 0) continue;
+        //NRA nra;
+        //toNRA(res, nra);
+        //DRA dra = minimize(determinize(nra));
+        //string name = "_" + std::to_string(i++);
+        ////encode_idcra(res, name, *fa_, f);
+        //encode_dra(dra, name, *fa_, f);
+    }
+    //atl::set_property(*fa_, f);
+    //nuxmvSolver_ = new nuxmv::nuxmv_solver(fa_);
+    //nuxmvSolver_ -> solve(timeout);
+    //return 1;
+}
 void StrSolver::solve(const string& timeout) {
     fa_ = new fomula_automaton();
     for (auto& var : undeclaredVar_) {
@@ -139,26 +238,26 @@ void StrSolver::solve(const string& timeout) {
     ID i = 0;
     auto f = fomula_;
     for (auto& idcras : counterIdcrasList_) {
-        IDCRA res = minimize(*(idcras.front()));
-        for (auto fa : idcras) {
-            if (fa == idcras.front()) continue;
-            //cout << "*******start intersect********" << endl;
-            res = get_intersect_fa(res, minimize(*fa));
-            //cout << "*******end intersect********" << endl;
-            //print_fa(res);
-            //cout << "*******************" << endl;
-        }
-        if (is_empty(res)) {
-            cout << "intersection is empty, this is true !" << endl;
-            return;
-        }
-        if (atl::get_property(res).names().size() == 0) continue;
-        NRA nra;
-        toNRA(res, nra);
-        DRA dra = minimize(determinize(nra));
-        string name = "_" + std::to_string(i++);
-        //encode_idcra(res, name, *fa_, f);
-        encode_dra(dra, name, *fa_, f);
+        //IDCRA res = minimize(*(idcras.front()));
+        //for (auto fa : idcras) {
+        //    if (fa == idcras.front()) continue;
+        //    cout << "*******start intersect********" << endl;
+        //    res = get_intersect_fa(res, minimize(*fa));
+        //    cout << "*******end intersect********" << endl;
+        //    print_fa(res);
+        //    cout << "*******************" << endl;
+        //}
+        //if (is_empty(res)) {
+        //    cout << "intersection is empty, this is true !" << endl;
+        //    return;
+        //}
+        //if (atl::get_property(res).names().size() == 0) continue;
+        //NRA nra;
+        //toNRA(res, nra);
+        //DRA dra = minimize(determinize(nra));
+        //string name = "_" + std::to_string(i++);
+        ////encode_idcra(res, name, *fa_, f);
+        //encode_dra(dra, name, *fa_, f);
     }
     atl::set_property(*fa_, f);
     nuxmvSolver_ = new nuxmv::nuxmv_solver(fa_);
@@ -204,7 +303,7 @@ void StrSolver::encode_dra(const DRA& dra, const string& name, fomula_automaton&
     boost::unordered_map<Registers, ll::enum_value> registers2ValueMap;
     values.clear();
     auto cvar = enum_variable("c" + name);
-    for (auto& r : get_alphabet(dra)) {
+    for (auto& r : alphabet(dra)) {
         auto value = enum_value(r.to_string());
         values.push_back(value);
         registers2ValueMap[r] = value;
@@ -276,7 +375,7 @@ void StrSolver::encode_idcra(const IDCRA& idcra, const string& name, fomula_auto
     boost::unordered_map<Label, ll::enum_value> label2ValueMap;
     values.clear();
     auto cvar = enum_variable("c" + name);
-    for (auto& l : get_alphabet(idcra)) {
+    for (auto& l : alphabet(idcra)) {
         auto value = enum_value(l.to_string());
         values.push_back(value);
         label2ValueMap[l] = value;
@@ -338,7 +437,7 @@ void StrSolver::encode() {
             encode_idcra(*idcra, name, *fa_, f);
             if (j > 0) {
                 string name1 = "_" + std::to_string(i) + "_" + std::to_string(j - 1);
-                for (auto& l : get_alphabet(*idcra)) {
+                for (auto& l : alphabet(*idcra)) {
                     string lname = "r_" + l.to_string();
                     f = (f & (propositional_fomula((lname + name1) + "=" + (lname + name))));
                 }
