@@ -607,6 +607,27 @@ namespace atl {
         return a_out;
     }
 
+    template <typename FA>
+    inline typename FA::DFA
+    minimize(const FA& a_in) {
+        typename FA::State2StateSetMap map;
+        typename FA::DFA a_out;
+        if constexpr (std::is_same<FA, typename FA::DFA>::value) {
+            minimize_impl::apply(a_in, a_out, map);
+        } else {
+            typename FA::DFA dfa;
+            typename FA::State2StateSetMap map1;
+            determinize(a_in, dfa, map1);
+            typename FA::State2StateSetMap map2;
+            minimize_impl::apply(dfa, a_out, map2);
+            for (auto& map_pair : map2) {
+                for (auto state : map_pair.second) {
+                    map[map_pair.first].insert(map1.at(state).begin(), map1.at(state).end());
+                }
+            }
+        }
+        return a_out;
+    }
     //template <typename FiniteAutomaton,
     //          typename DeterministicFiniteAutomaton>
     //inline void

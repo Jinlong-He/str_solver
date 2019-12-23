@@ -272,6 +272,30 @@ namespace atl {
         }
         return res;
     }
+
+    template <typename DFA>
+    inline DFA 
+    get_intersect_fa(const DFA& a_lhs,
+                     const DFA& a_rhs) {
+        typename DFA::State2StatePairsMap h_maps;
+        DFA a_out;
+        typename DFA::State2StatePairMap h_map;
+        intersect_impl::apply(a_lhs, a_rhs, a_out, 
+                              intersect_merge<typename DFA::state_property_type>(),
+                              intersect_merge<typename DFA::symbol_property_type>(),
+                              intersect_merge<typename DFA::automaton_property_type>(),
+                              h_map);
+        typename DFA::State2StateSetMap map;
+        DFA res;
+        minimize(a_out, res, map);
+        for (auto& map_pair : map) {
+            auto& vec = h_maps[map_pair.first];
+            for (auto s : map_pair.second) {
+                vec.push_back(h_map[s]);
+            }
+        }
+        return res;
+    }
 }
 
 #endif /* atl_finite_automaton_operate_hpp */

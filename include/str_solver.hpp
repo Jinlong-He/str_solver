@@ -25,7 +25,7 @@ public:
             strings strs;
             readFile(fileName, strs);
             parse(strs);
-            getCounterIdcrasList();
+            //getCounterIdcrasList();
             //encode();
         }
 
@@ -45,6 +45,8 @@ public:
 
     void solve(const string& timeout);
     void solve1(const string& timeout);
+    void solve2(const string& timeout, int window);
+    void getCounterIdcrasList();
 private:
     void readFile(const string& fileName, strings& strs);
     void parseIdcras(const strings& strs, IDCRAs& idcras);
@@ -53,10 +55,10 @@ private:
     void parseDeclaration(const string& str);
     void parse(const strings& strs);
 
-    void getCounterIdcrasList();
 
     void encode();
     void encode_idcra(const IDCRA& idcra, const string& name, fomula_automaton& fa, propositional_fomula& f);
+    void encode_idcra(const IDCRA& idcra, const string& name, fomula_automaton& fa, propositional_fomula& f, const int_variable& cvar, int window);
     void encode_dra(const DRA& dra, const string& name, fomula_automaton& fa, propositional_fomula& f);
 private:
     IDCRAsList idcrasList_;
