@@ -204,7 +204,7 @@ namespace atl {
                                                   atl::get_property(a_rhs, initial_state_rhs)));
             }
 
-            StatePairMap pair_map({{StatePair(initial_state_lhs, initial_state_lhs),
+            StatePairMap pair_map({{StatePair(initial_state_lhs, initial_state_rhs),
                                     initial_state_out}}); 
             do_intersect(a_lhs, a_rhs, a_out, 
                          initial_state_lhs, initial_state_rhs, 

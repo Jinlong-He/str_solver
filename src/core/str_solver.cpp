@@ -463,14 +463,14 @@ void StrSolver::encode_idcra(const IDCRA& idcra, const string& name, fomula_auto
     ID rid = 0;
     propositional_fomula register_true_fomula("TRUE");
     for (auto& rname : atl::get_property(idcra).names()) {
-        //auto rvar = int_variable(rname);
-        auto rvar = int_variable(rname, 0, window);
+        auto rvar = window > 0 ? int_variable(rname, 0, window) : int_variable(rname);
+        //auto rvar = int_variable(rname, 0, window);
         auto s = add_control_state(fa, rvar, rvar == int_value(0));
         registerNamesMap[rname] = s;
         add_state(fa, int_variable(rname + " + 1"));
         auto bvar = bool_variable("r_" + rname);
-        add_transition(fa, s, s + 1, (bvar == bool_value(1)) & (rvar < int_value(window)));
-        //add_transition(fa, s, s + 1, (bvar == bool_value(1)));
+        //add_transition(fa, s, s + 1, (bvar == bool_value(1)) & (rvar < int_value(window)));
+        add_transition(fa, s, s + 1, (bvar == bool_value(1)));
         add_transition(fa, s, s, trueFomula);
         registersMap[rid++] = add_input_state(fa, bvar);
         register_true_fomula = (register_true_fomula & (bvar == bool_value(1)));
