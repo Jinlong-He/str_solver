@@ -473,7 +473,7 @@ void StrSolver::encode_idcra(const IDCRA& idcra, const string& name, fomula_auto
         add_transition(fa, s, s + 1, (bvar == bool_value(1)));
         add_transition(fa, s, s, trueFomula);
         registersMap[rid++] = add_input_state(fa, bvar);
-        register_true_fomula = (register_true_fomula & (bvar == bool_value(1)));
+        register_true_fomula = (register_true_fomula & (bvar == bool_value(0)));
     }
 
     propositional_fomula ff("FALSE");

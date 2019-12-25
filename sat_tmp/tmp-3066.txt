@@ -1,0 +1,70 @@
+declare: Set(P20, R2, P19, R0, P18, R5, R4, P26, P23, R3, P22, T2, R6, P17, T1, P21, P0, T0)
+#intconstraints:
+P26 != 0 & P23 + -1*P17 != 0 & P22 + -1*P21 != 0 & P22 + -1*P20 != 0 & P22 + -1*P19 != 0 & P22 + -1*P18 != 0 & P22 + -1*P17 != 0 & P21 + -1*P17 != 0 & P20 + -1*P19 != 0 & P20 + -1*P18 != 0 & P20 + -1*P17 != 0 & P19 + -1*P17 != 0 & P18 + -1*P17 != 0 & P0 + -1 >= 0 & ((((((R10 + -1 * (0 + 1)) = 0) & ((P0 + -1 * R10) >= 0)) | (((R10 + -1 * P0) = 0) & ((((0 + 1) + -1 * P0) + -1) >= 0))) & (R9 = 0)) | ((((-1 >= 0) | (-1 * 1 >= 0)) | (-1 * P0 >= 0)) & (T2 = 0))) & (((((R8 + -1 * ((P0 + -1) + 1)) = 0) & ((P0 + -1 * R8) >= 0)) | (((R8 + -1 * P0) = 0) & (((((P0 + -1) + 1) + -1 * P0) + -1) >= 0))) & ((R7 + -1 * (P0 + -1)) = 0)) & (((((R6 + -1 * (0 + 1)) = 0) & ((P26 + -1 * R6) >= 0)) | (((R6 + -1 * P26) = 0) & ((((0 + 1) + -1 * P26) + -1) >= 0))) & (R5 = 0)) & ((R4 + -1 * T2) = 0) & ((R3 + -1 * T1) = 0) & ((R2 + -1 * T0) = 0) & ((R1 + -1 * P0) = 0) & ((R0 + -1 * P26) = 0) & TRUE
+$
+#automata:
+#states: 1
+#init: 0
+#final: 0,
+#transitons: 
+0;0;0;127;List(1)
+#register: R1;
+#end
+#automata:
+#states: 2
+#init: 0
+#final: 1,
+#transitons: 
+0;0;0;127;List(1, 1)
+1;1;0;127;List(0, 0)
+0;1;10;10;List(0, 1)
+#register: R7;R8;
+#end
+#automata:
+#states: 4
+#init: 0
+#final: 0,1,3,
+#transitons: 
+0;1;14;31;List(0, 1)
+0;2;9;13;List(0, 1)
+0;1;33;127;List(0, 1)
+0;2;32;32;List(0, 1)
+3;3;0;127;List(0, 0)
+2;1;0;127;List(0, 1)
+1;1;0;127;List(0, 1)
+1;3;0;127;List(0, 0)
+0;0;0;127;List(1, 1)
+0;1;0;8;List(0, 1)
+#register: R9;R10;
+#end
+$
+$
+#automata:
+#states: 2
+#init: 0
+#final: 1,
+#transitons: 
+0;1;32;32;List()
+#register: 
+#end
+$
+$
+#automata:
+#states: 2
+#init: 0
+#final: 1,
+#transitons: 
+0;1;13;13;List()
+#register: 
+#end
+$
+$
+#automata:
+#states: 2
+#init: 0
+#final: 1,
+#transitons: 
+0;1;9;9;List()
+#register: 
+#end
+$
