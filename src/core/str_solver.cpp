@@ -312,13 +312,15 @@ void StrSolver::solve1(const string& timeout) {
 void StrSolver::solve2(const string& timeout, int window) {
     fa_ = new fomula_automaton();
     for (auto& var : undeclaredVar_) {
-        add_input_state(*fa_, int_variable(var));
-        //add_input_state(*fa_, int_variable(var, 0, window));
+        //add_input_state(*fa_, int_variable(var));
+        add_input_state(*fa_, int_variable(var, 0, window));
     }
 
     ID i = 0;
     auto f = fomula_;
     for (auto& idcras : idcrasList_) {
+        if (idcras.size() == 1 && atl::get_property(*idcras.front()).names().size() == 0)
+            continue;
         string name = "_" + std::to_string(i++);
         auto cvar = int_variable("c" + name, 0, 128);
         auto cstate = add_input_state(*fa_, cvar);
@@ -469,8 +471,8 @@ void StrSolver::encode_idcra(const IDCRA& idcra, const string& name, fomula_auto
         registerNamesMap[rname] = s;
         add_state(fa, int_variable(rname + " + 1"));
         auto bvar = bool_variable("r_" + rname);
-        //add_transition(fa, s, s + 1, (bvar == bool_value(1)) & (rvar < int_value(window)));
-        add_transition(fa, s, s + 1, (bvar == bool_value(1)));
+        add_transition(fa, s, s + 1, (bvar == bool_value(1)) & (rvar < int_value(window)));
+        //add_transition(fa, s, s + 1, (bvar == bool_value(1)));
         add_transition(fa, s, s, trueFomula);
         registersMap[rid++] = add_input_state(fa, bvar);
         register_true_fomula = (register_true_fomula & (bvar == bool_value(0)));

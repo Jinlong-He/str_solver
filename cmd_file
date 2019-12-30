@@ -1,3 +1,4 @@
 go_msat 
-check_invar_ic3
+build_boolean_model
+check_invar_ic3 -d
 quit

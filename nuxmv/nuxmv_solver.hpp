@@ -33,8 +33,9 @@ namespace nuxmv {
             fs.close();
             //string commond = "timeout " + std::to_string(timeout) + " nuXmv -source cmd_file out.smv";
             if (timeout == "" || timeout == "0") {
-                string commond = is_infinite(*fa_) ? "nuxmv -source cmd_file out.smv" : 
-                                                     "nuxmv out.smv";
+                //string commond = is_infinite(*fa_) ? "nuxmv -source cmd_file out.smv" : 
+                //                                     "nuxmv out.smv";
+                string commond = "nuxmv -source cmd_file out.smv";
                 std::cout << commond << std::endl;
                 system(commond.c_str());
             } else {
