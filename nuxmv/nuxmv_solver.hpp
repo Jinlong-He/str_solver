@@ -35,12 +35,12 @@ namespace nuxmv {
             if (timeout == "" || timeout == "0") {
                 //string commond = is_infinite(*fa_) ? "nuxmv -source cmd_file out.smv" : 
                 //                                     "nuxmv out.smv";
-                string commond = "nuxmv -source " + engine + " out.smv";
+                string commond = "nuxmv -dcx -source " + engine + " out.smv";
                 std::cout << commond << std::endl;
                 std::cout << system(commond.c_str()) << std::endl;
             } else {
                 string time_str = "timeout " + timeout;
-                string commond = time_str + "nuxmv -source " + engine + " out.smv";
+                string commond = time_str + "nuxmv -dcx -source " + engine + " out.smv";
                 std::cout << commond << std::endl;
                 std::cout << system(commond.c_str()) << std::endl;
             }
