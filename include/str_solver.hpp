@@ -45,7 +45,7 @@ public:
 
     void solve(const string& timeout);
     void solve1(const string& timeout);
-    void solve2(const string& timeout, int window);
+    void solve2(const string& timeout, int window, const string& engine);
     void getCounterIdcrasList();
 private:
     void readFile(const string& fileName, strings& strs);

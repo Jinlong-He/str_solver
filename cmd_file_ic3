@@ -1,0 +1,5 @@
+go_msat 
+build_boolean_model
+bmc_setup
+check_invar_ic3
+quit

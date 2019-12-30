@@ -309,7 +309,7 @@ void StrSolver::solve1(const string& timeout) {
     //return 1;
 }
 
-void StrSolver::solve2(const string& timeout, int window) {
+void StrSolver::solve2(const string& timeout, int window, const string& engine) {
     fa_ = new fomula_automaton();
     for (auto& var : undeclaredVar_) {
         //add_input_state(*fa_, int_variable(var));
@@ -332,7 +332,7 @@ void StrSolver::solve2(const string& timeout, int window) {
     }
     atl::set_property(*fa_, f);
     nuxmvSolver_ = new nuxmv::nuxmv_solver(fa_);
-    nuxmvSolver_ -> solve(timeout);
+    nuxmvSolver_ -> solve(engine, timeout);
     //return 1;
 }
 
