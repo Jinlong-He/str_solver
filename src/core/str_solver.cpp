@@ -487,9 +487,10 @@ void StrSolver::encode_idcra(const IDCRA& idcra, const string& name, fomula_auto
     for (auto fs : idcra.final_state_set()) {
         auto fs_ = stateMap[fs];
         auto& value = atl::get_property(fa, fs_);
-        add_transition(fa, state, fs_, (((svar == value) & cvar == int_value(128)) & register_true_fomula));
+        //add_transition(fa, state, fs_, (((svar == value) & cvar == int_value(128)) & register_true_fomula));
         ff = (ff | (svar == value));
     }
+    add_transition(fa, state, stateMap[*(idcra.final_state_set().begin())], ((ff & cvar == int_value(128)) & register_true_fomula));
     final_fomula = final_fomula & ff;
 
     for (tie(it, end) = states(idcra); it != end; it++) {
