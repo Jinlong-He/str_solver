@@ -40,7 +40,7 @@ namespace nuxmv {
                 std::cout << system(commond.c_str()) << std::endl;
             } else {
                 string time_str = "timeout " + timeout;
-                string commond = time_str + "nuxmv -dcx -source " + engine + " out.smv";
+                string commond = time_str + " nuxmv -dcx -source " + engine + " out.smv";
                 std::cout << commond << std::endl;
                 std::cout << system(commond.c_str()) << std::endl;
             }

@@ -313,7 +313,8 @@ void StrSolver::solve2(const string& timeout, int window, const string& engine) 
     fa_ = new fomula_automaton();
     for (auto& var : undeclaredVar_) {
         //add_input_state(*fa_, int_variable(var));
-        add_input_state(*fa_, int_variable(var, 0, window));
+        auto uvar = window > 0 ? int_variable(var, 0, window) : int_variable(var);
+        add_input_state(*fa_, uvar);
     }
 
     ID i = 0;
@@ -471,7 +472,11 @@ void StrSolver::encode_idcra(const IDCRA& idcra, const string& name, fomula_auto
         registerNamesMap[rname] = s;
         add_state(fa, int_variable(rname + " + 1"));
         auto bvar = bool_variable("r_" + rname);
-        add_transition(fa, s, s + 1, (bvar == bool_value(1)) & (rvar < int_value(window)));
+        if (window == 0) {
+            add_transition(fa, s, s + 1, (bvar == bool_value(1)));
+        } else {
+            add_transition(fa, s, s + 1, (bvar == bool_value(1)) & (rvar < int_value(window)));
+        }
         //add_transition(fa, s, s + 1, (bvar == bool_value(1)));
         add_transition(fa, s, s, trueFomula);
         registersMap[rid++] = add_input_state(fa, bvar);
