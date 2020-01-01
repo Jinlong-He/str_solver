@@ -1,0 +1,30 @@
+declare: Set(P5)
+#intconstraints:
+-1*P5 + -1 >= 0 & ((-1 + -1 * P5) >= 0) & TRUE & TRUE
+$
+#automata:
+#states: 4
+#init: 0
+#final: 3,
+#transitons: 
+2;3;99;99;List()
+1;2;98;98;List()
+0;1;97;97;List()
+#register: 
+#end
+#automata:
+#states: 3
+#init: 0
+#final: 0,1,
+#transitons: 
+2;2;0;127;List(0)
+0;1;101;127;List(0)
+0;0;0;127;List(1)
+1;1;101;127;List(0)
+0;2;100;100;List(0)
+1;2;100;100;List(0)
+0;1;0;99;List(0)
+1;1;0;99;List(0)
+#register: R0;
+#end
+$
