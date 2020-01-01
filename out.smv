@@ -1,6 +1,6 @@
 MODULE main
 VAR
-R0 : -5..5;
+R0 : -1..5;
 VAR
 s_0_1 : {v0,v1,v2,t};
 VAR
@@ -10,7 +10,7 @@ r_R0 : boolean;
 IVAR
 c_0 : 0..128;
 IVAR
-P5 : -5..5;
+P5 : -1..5;
 INIT
 (s_0_0=v0)
 INIT
