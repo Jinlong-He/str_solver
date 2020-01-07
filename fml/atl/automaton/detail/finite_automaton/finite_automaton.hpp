@@ -417,6 +417,7 @@ namespace atl {
     template <typename FA>
     inline bool
     is_empty(const FA& a) {
+        if (transition_map(a).size() == 0) return true;
         if (is_forward_reachable(a)) {
             if (a.final_state_set().size() == 0) return true;
             return false;

@@ -337,11 +337,12 @@ void StrSolver::solve2(const string& timeout, int window, const string& engine) 
     //return 1;
 }
 
-void StrSolver::solve(const string& timeout) {
+void StrSolver::solve(const string& timeout, int window) {
     getCounterIdcrasList();
     fa_ = new fomula_automaton();
     for (auto& var : undeclaredVar_) {
-        add_input_state(*fa_, int_variable(var));
+        auto uvar = window > 0 ? int_variable(var, -1, window) : int_variable(var);
+        add_input_state(*fa_, uvar);
     }
     ID i = 0;
     auto f = fomula_;
@@ -360,15 +361,15 @@ void StrSolver::solve(const string& timeout) {
         toNRA(res, nra);
         DRA dra = minimize(nra);
         string name = "_" + std::to_string(i++);
-        encode_dra(dra, name, *fa_, f);
+        encode_dra(dra, name, *fa_, f, window);
     }
     atl::set_property(*fa_, f);
     nuxmvSolver_ = new nuxmv::nuxmv_solver(fa_);
-    nuxmvSolver_ -> solve(timeout);
+    nuxmvSolver_ -> solve("cmd_file_ic3", timeout);
     //return 1;
 }
 
-void StrSolver::encode_dra(const DRA& dra, const string& name, fomula_automaton& fa, propositional_fomula& final_fomula) {
+void StrSolver::encode_dra(const DRA& dra, const string& name, fomula_automaton& fa, propositional_fomula& final_fomula, int window) {
     vector<ll::enum_value> values;
     typename IDCRA::StateIter it, end;
     boost::unordered_map<ID, ID> stateMap;
@@ -384,25 +385,6 @@ void StrSolver::encode_dra(const DRA& dra, const string& name, fomula_automaton&
     auto state = add_control_state(fa, svar,
                                    svar == atl::get_property(fa, 
                                                 stateMap[dra.initial_state()]));
-
-    propositional_fomula ff("FALSE");
-    for (auto fs : dra.final_state_set()) {
-        ff = (ff | (svar == atl::get_property(fa, stateMap[fs])));
-    }
-
-    final_fomula = final_fomula & ff;
-
-    boost::unordered_map<string, ID> registerNamesMap;
-    boost::unordered_map<ID, ID> registersMap;
-    ID rid = 0;
-    for (auto& rname : atl::get_property(dra).names()) {
-        auto rvar = int_variable(rname);
-        auto rs = add_control_state(fa, rvar, rvar == int_value(0));
-        add_state(fa, int_variable(rname + " + 1"));
-        registerNamesMap[rname] = rs;
-        registersMap[rid++] = rs;
-    }
-
     boost::unordered_map<Registers, ll::enum_value> registers2ValueMap;
     values.clear();
     auto cvar = enum_variable("c" + name);
@@ -411,8 +393,36 @@ void StrSolver::encode_dra(const DRA& dra, const string& name, fomula_automaton&
         values.push_back(value);
         registers2ValueMap[r] = value;
     }
-
     auto cstate = add_input_state(fa, enum_variable("c" + name, values.begin(), values.end()));
+
+    propositional_fomula ff("FALSE");
+    auto trueFomula = propositional_fomula("TRUE");
+    for (auto fs : dra.final_state_set()) {
+        ff = (ff | (svar == atl::get_property(fa, stateMap[fs])));
+    }
+
+    final_fomula = final_fomula & ff;
+    boost::unordered_map<string, ID> registerNamesMap;
+    ID rid = 0;
+    for (auto& rname : atl::get_property(dra).names()) {
+        auto rvar = window > 0 ? int_variable(rname, -1, window) : int_variable(rname);
+        auto s = add_control_state(fa, rvar, rvar == int_value(0));
+        registerNamesMap[rname] = s;
+        add_state(fa, int_variable(rname + " + 1"));
+        auto bvar = bool_variable("r_" + rname);
+        for (auto& r : alphabet(dra)) {
+            auto cf = (cvar == registers2ValueMap[r]);
+            if (r.nums()[rid] == 1) {
+                if (window == 0) {
+                    add_transition(fa, s, s + 1, cf);
+                } else {
+                    add_transition(fa, s, s + 1, cf & (rvar < int_value(window)));
+                }
+            }
+        }
+        rid++;
+        add_transition(fa, s, s, trueFomula);
+    }
 
     for (tie(it, end) = states(dra); it != end; it++) {
         typename DRA::OutTransitionIter tit, tend;
@@ -422,23 +432,9 @@ void StrSolver::encode_dra(const DRA& dra, const string& name, fomula_automaton&
                       atl::get_property(fa, cstate) == registers2ValueMap[t]);
             const auto& nums = t.nums();
             add_transition(fa, state, stateMap[atl::target(dra, *tit)], f);
-
-            for (int i = 0; i < nums.size(); i++) {
-                auto rstate = registersMap[i];
-                if (nums[i] == 1) {
-                    add_transition(fa, rstate, rstate + 1, f);
-                } else {
-                    add_transition(fa, rstate, rstate, f);
-                }
-            }
         }
     }
-    auto trueFomula = propositional_fomula("TRUE");
     add_transition(fa, state, tstate, trueFomula);
-    for (auto& rname : atl::get_property(dra).names()) {
-        auto rstate = registerNamesMap[rname];
-        add_transition(fa, rstate, rstate, trueFomula);
-    }
 }
 
 void StrSolver::encode_idcra(const IDCRA& idcra, const string& name, fomula_automaton& fa, propositional_fomula& final_fomula, const int_variable& cvar, int window) {
@@ -459,7 +455,6 @@ void StrSolver::encode_idcra(const IDCRA& idcra, const string& name, fomula_auto
                                                 stateMap[idcra.initial_state()]));
 
     auto trueFomula = propositional_fomula("TRUE");
-
 
     boost::unordered_map<string, ID> registerNamesMap;
     boost::unordered_map<ID, ID> registersMap;

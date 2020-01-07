@@ -43,7 +43,7 @@ public:
         delete fa_;
     }
 
-    void solve(const string& timeout);
+    void solve(const string& timeout, int window);
     void solve1(const string& timeout);
     void solve2(const string& timeout, int window, const string& engine);
     void getCounterIdcrasList();
@@ -59,7 +59,7 @@ private:
     void encode();
     void encode_idcra(const IDCRA& idcra, const string& name, fomula_automaton& fa, propositional_fomula& f);
     void encode_idcra(const IDCRA& idcra, const string& name, fomula_automaton& fa, propositional_fomula& f, const int_variable& cvar, int window);
-    void encode_dra(const DRA& dra, const string& name, fomula_automaton& fa, propositional_fomula& f);
+    void encode_dra(const DRA& dra, const string& name, fomula_automaton& fa, propositional_fomula& f, int window);
 private:
     IDCRAsList idcrasList_;
     IDCRAsList counterIdcrasList_;
