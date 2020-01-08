@@ -26,7 +26,8 @@ namespace nuxmv {
 
         void solve(const string& engine, const string& timeout = "0") {
             std::fstream fs;
-            fs.open ("out.smv", std::fstream::out);
+            string file_name = engine + "_out.smv";
+            fs.open (file_name, std::fstream::out);
             if (fs.is_open()) {
                 fs << translator_ -> translate_nuxmv_format();
             }
@@ -35,12 +36,12 @@ namespace nuxmv {
             if (timeout == "" || timeout == "0") {
                 //string commond = is_infinite(*fa_) ? "nuxmv -source cmd_file out.smv" : 
                 //                                     "nuxmv out.smv";
-                string commond = "nuxmv -dcx -source " + engine + " out.smv";
+                string commond = "nuxmv -dcx -source " + engine + " " + file_name;
                 std::cout << commond << std::endl;
                 std::cout << system(commond.c_str()) << std::endl;
             } else {
                 string time_str = "timeout " + timeout;
-                string commond = time_str + " nuxmv -dcx -source " + engine + " out.smv";
+                string commond = time_str + " nuxmv -dcx -source " + engine + " " + file_name;
                 std::cout << commond << std::endl;
                 std::cout << system(commond.c_str()) << std::endl;
             }
