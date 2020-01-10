@@ -1,36 +1,141 @@
 MODULE main
 VAR
+R6 : integer;
+VAR
+s_0_2 : {v0,v1,v2,t};
+VAR
+R3 : integer;
+VAR
+R5 : integer;
+VAR
+R7 : integer;
+VAR
+R4 : integer;
+VAR
+s_0_1 : {v0,v1,v2,v3,v4,t};
+VAR
 R0 : integer;
 VAR
-s_0_1 : {v0,t};
+R1 : integer;
 VAR
-s_0_0 : {v0,v1,t};
+s_0_0 : {v0,t};
+IVAR
+r_R1 : boolean;
+IVAR
+r_R3 : boolean;
+IVAR
+r_R5 : boolean;
 IVAR
 r_R0 : boolean;
 IVAR
 c_0 : 0..128;
 IVAR
-P0 : integer;
+r_R7 : boolean;
+IVAR
+r_R4 : boolean;
+IVAR
+ T3 : integer;
+IVAR
+ T0 : integer;
+IVAR
+ T2 : integer;
+IVAR
+r_R6 : boolean;
+IVAR
+ i : integer;
+IVAR
+ T1 : integer;
+IVAR
+R2 : integer;
 INIT
 (s_0_0=v0)
 INIT
+(R0=0)
+INIT
 (s_0_1=v0)
 INIT
-(R0=0)
+(R4=0)
+INIT
+(R5=0)
+INIT
+(R1=0)
+INIT
+(s_0_2=v0)
+INIT
+(R6=0)
+INIT
+(R7=0)
+INIT
+(R3=0)
 ASSIGN
+next(R6):= case
+(r_R6=TRUE) : R6 + 1;
+TRUE : R6;
+esac;
+next(s_0_2):= case
+((((FALSE|(s_0_2=v2))|(s_0_2=v1))&(c_0=128))&(((TRUE&(r_R6=FALSE))&(r_R7=FALSE))&(r_R3=FALSE))) : v2;
+((((((s_0_2=v0)&(c_0>=65))&(c_0<=90))&(r_R6=TRUE))&(r_R7=TRUE))&(r_R3=FALSE)) : v0;
+((((((s_0_2=v0)&(c_0>=123))&(c_0<=123))&(r_R6=FALSE))&(r_R7=TRUE))&(r_R3=TRUE)) : v1;
+((((((s_0_2=v0)&(c_0>=91))&(c_0<=127))&(r_R6=TRUE))&(r_R7=TRUE))&(r_R3=FALSE)) : v0;
+((((((s_0_2=v0)&(c_0>=0))&(c_0<=64))&(r_R6=TRUE))&(r_R7=TRUE))&(r_R3=FALSE)) : v0;
+((((((s_0_2=v1)&(c_0>=65))&(c_0<=90))&(r_R6=FALSE))&(r_R7=FALSE))&(r_R3=FALSE)) : v2;
+((((((s_0_2=v1)&(c_0>=0))&(c_0<=64))&(r_R6=FALSE))&(r_R7=FALSE))&(r_R3=FALSE)) : v2;
+((((((s_0_2=v1)&(c_0>=91))&(c_0<=127))&(r_R6=FALSE))&(r_R7=FALSE))&(r_R3=FALSE)) : v2;
+((((((s_0_2=v2)&(c_0>=0))&(c_0<=64))&(r_R6=FALSE))&(r_R7=FALSE))&(r_R3=FALSE)) : v2;
+((((((s_0_2=v2)&(c_0>=65))&(c_0<=90))&(r_R6=FALSE))&(r_R7=FALSE))&(r_R3=FALSE)) : v2;
+((((((s_0_2=v2)&(c_0>=91))&(c_0<=127))&(r_R6=FALSE))&(r_R7=FALSE))&(r_R3=FALSE)) : v2;
+TRUE : t;
+esac;
+next(R3):= case
+(r_R3=TRUE) : R3 + 1;
+TRUE : R3;
+esac;
+next(R5):= case
+(r_R5=TRUE) : R5 + 1;
+TRUE : R5;
+esac;
+next(R7):= case
+(r_R7=TRUE) : R7 + 1;
+TRUE : R7;
+esac;
+next(R4):= case
+(r_R4=TRUE) : R4 + 1;
+TRUE : R4;
+esac;
+next(s_0_1):= case
+((((((FALSE|(s_0_1=v4))|(s_0_1=v3))|(s_0_1=v1))|(s_0_1=v0))&(c_0=128))&(((TRUE&(r_R4=FALSE))&(r_R5=FALSE))&(r_R1=FALSE))) : v4;
+((((((s_0_1=v0)&(c_0>=0))&(c_0<=64))&(r_R4=FALSE))&(r_R5=TRUE))&(r_R1=TRUE)) : v1;
+((((((s_0_1=v0)&(c_0>=124))&(c_0<=127))&(r_R4=FALSE))&(r_R5=TRUE))&(r_R1=TRUE)) : v3;
+((((((s_0_1=v0)&(c_0>=65))&(c_0<=90))&(r_R4=TRUE))&(r_R5=TRUE))&(r_R1=FALSE)) : v0;
+((((((s_0_1=v0)&(c_0>=65))&(c_0<=90))&(r_R4=FALSE))&(r_R5=TRUE))&(r_R1=TRUE)) : v1;
+((((((s_0_1=v0)&(c_0>=91))&(c_0<=122))&(r_R4=FALSE))&(r_R5=TRUE))&(r_R1=TRUE)) : v1;
+((((((s_0_1=v0)&(c_0>=123))&(c_0<=123))&(r_R4=FALSE))&(r_R5=TRUE))&(r_R1=TRUE)) : v2;
+((((((s_0_1=v0)&(c_0>=0))&(c_0<=64))&(r_R4=TRUE))&(r_R5=TRUE))&(r_R1=FALSE)) : v0;
+((((((s_0_1=v0)&(c_0>=91))&(c_0<=127))&(r_R4=TRUE))&(r_R5=TRUE))&(r_R1=FALSE)) : v0;
+((((((s_0_1=v1)&(c_0>=65))&(c_0<=90))&(r_R4=FALSE))&(r_R5=FALSE))&(r_R1=FALSE)) : v4;
+((((((s_0_1=v1)&(c_0>=0))&(c_0<=64))&(r_R4=FALSE))&(r_R5=FALSE))&(r_R1=FALSE)) : v4;
+((((((s_0_1=v1)&(c_0>=91))&(c_0<=127))&(r_R4=FALSE))&(r_R5=FALSE))&(r_R1=FALSE)) : v4;
+((((((s_0_1=v3)&(c_0>=91))&(c_0<=127))&(r_R4=FALSE))&(r_R5=FALSE))&(r_R1=FALSE)) : v4;
+((((((s_0_1=v3)&(c_0>=65))&(c_0<=90))&(r_R4=FALSE))&(r_R5=FALSE))&(r_R1=FALSE)) : v4;
+((((((s_0_1=v3)&(c_0>=0))&(c_0<=64))&(r_R4=FALSE))&(r_R5=FALSE))&(r_R1=FALSE)) : v4;
+((((((s_0_1=v4)&(c_0>=65))&(c_0<=90))&(r_R4=FALSE))&(r_R5=FALSE))&(r_R1=FALSE)) : v4;
+((((((s_0_1=v4)&(c_0>=0))&(c_0<=64))&(r_R4=FALSE))&(r_R5=FALSE))&(r_R1=FALSE)) : v4;
+((((((s_0_1=v4)&(c_0>=91))&(c_0<=127))&(r_R4=FALSE))&(r_R5=FALSE))&(r_R1=FALSE)) : v4;
+TRUE : t;
+esac;
 next(R0):= case
 (r_R0=TRUE) : R0 + 1;
 TRUE : R0;
 esac;
-next(s_0_1):= case
-(((FALSE|(s_0_1=v0))&(c_0=128))&(TRUE&(r_R0=FALSE))) : v0;
-((((s_0_1=v0)&(c_0>=0))&(c_0<=127))&(r_R0=TRUE)) : v0;
-TRUE : t;
+next(R1):= case
+(r_R1=TRUE) : R1 + 1;
+TRUE : R1;
 esac;
 next(s_0_0):= case
-(((FALSE|(s_0_0=v1))&(c_0=128))&TRUE) : v1;
-(((s_0_0=v0)&(c_0>=47))&(c_0<=47)) : v1;
-(((s_0_0=v1)&(c_0>=0))&(c_0<=127)) : v1;
+(((FALSE|(s_0_0=v0))&(c_0=128))&(TRUE&(r_R0=FALSE))) : v0;
+((((s_0_0=v0)&(c_0>=0))&(c_0<=64))&(r_R0=TRUE)) : v0;
+((((s_0_0=v0)&(c_0>=65))&(c_0<=90))&(r_R0=TRUE)) : v0;
+((((s_0_0=v0)&(c_0>=91))&(c_0<=127))&(r_R0=TRUE)) : v0;
 TRUE : t;
 esac;
-INVARSPEC !(((P0 != 0 & ((R0 + -1 * P0) = 0) & TRUE&(FALSE|(s_0_0=v1)))&(FALSE|(s_0_1=v0))))
+INVARSPEC !((((TRUE & (1 >= 0) & (((((R7 + -1 * (i + 1)) = 0) & ((T2 + -1 * R7) >= 0)) | (((R7 + -1 * T2) = 0) & ((((i + 1) + -1 * T3) + -1) >= 0))) & ((R6 + -1 * i) = 0)) & (1 >= 0) & ((((((R5 + -1 * (i + 1)) = 0) & ((T0 + -1 * R5) >= 0)) | (((R5 + -1 * T0) = 0) & ((((i + 1) + -1 * T1) + -1) >= 0))) & ((R4 + -1 * i) = 0)) | (((((-1 * i + -1) >= 0) | (1 = 0)) | ((i + -1 * T0) >= 0)) & (T1 = 0))) & ((R3 + -1 * T3) = 0) & ((R2 + -1 * T2) = 0) & ((R1 + -1 * T1) = 0) & ((R0 + -1 * T0) = 0) & (((R1 + -1 * R1) = 0) & (((R0 + -1 * R2) = 0) & (((R3 + -1 * R3) = 0) & (((R0 + -1 * R0) = 0) & (((R1 + -1 * R1) = 0) & (((R0 + -1 * R2) = 0) & (((R3 + -1 * R3) = 0) & (((R0 + -1 * R0) = 0) & TRUE)))))))) & TRUE&(FALSE|(s_0_0=v0)))&((((FALSE|(s_0_1=v4))|(s_0_1=v3))|(s_0_1=v1))|(s_0_1=v0)))&((FALSE|(s_0_2=v2))|(s_0_2=v1))))

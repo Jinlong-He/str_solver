@@ -467,12 +467,12 @@ void StrSolver::encode_idcra(const IDCRA& idcra, const string& name, fomula_auto
         registerNamesMap[rname] = s;
         add_state(fa, int_variable(rname + " + 1"));
         auto bvar = bool_variable("r_" + rname);
-        if (window == 0) {
-            add_transition(fa, s, s + 1, (bvar == bool_value(1)));
-        } else {
-            add_transition(fa, s, s + 1, (bvar == bool_value(1)) & (rvar < int_value(window)));
-        }
-        //add_transition(fa, s, s + 1, (bvar == bool_value(1)));
+        //if (window == 0) {
+        //    add_transition(fa, s, s + 1, (bvar == bool_value(1)));
+        //} else {
+        //    add_transition(fa, s, s + 1, (bvar == bool_value(1)) & (rvar < int_value(window)));
+        //}
+        add_transition(fa, s, s + 1, (bvar == bool_value(1)));
         add_transition(fa, s, s, trueFomula);
         registersMap[rid++] = add_input_state(fa, bvar);
         register_true_fomula = (register_true_fomula & (bvar == bool_value(0)));
